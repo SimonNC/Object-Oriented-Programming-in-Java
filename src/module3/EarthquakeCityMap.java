@@ -13,8 +13,10 @@ import processing.core.PApplet;
 import de.fhpotsdam.unfolding.UnfoldingMap;
 import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.data.PointFeature;
+import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
 import de.fhpotsdam.unfolding.providers.Google;
+import de.fhpotsdam.unfolding.providers.OpenStreetMap;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 
@@ -58,7 +60,9 @@ public class EarthquakeCityMap extends PApplet {
 		    earthquakesURL = "2.5_week.atom"; 	// Same feed, saved Aug 7, 2015, for working offline
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 700, 500, new Google.GoogleMapProvider());
+			//map = new UnfoldingMap(this, 200, 50, 700, 500, new Google.GoogleMapProvider());
+			map = new UnfoldingMap(this, 200, 50, 700, 500, new OpenStreetMap.OpenStreetMapProvider());
+			map = new UnfoldingMap(this,200,50,700,500);
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 			//earthquakesURL = "2.5_week.atom";
 		}
@@ -77,8 +81,11 @@ public class EarthquakeCityMap extends PApplet {
 	    // to create a new SimplePointMarker for each PointFeature in 
 	    // earthquakes.  Then add each new SimplePointMarker to the 
 	    // List markers (so that it will be added to the map in the line below)
+	   for(PointFeature pf : earthquakes) {
+		   markers.add(createMarker(pf));
+	   }
 	    
-	    
+
 	    // Add the markers to the map so that they are displayed
 	    map.addMarkers(markers);
 	}
@@ -97,7 +104,7 @@ public class EarthquakeCityMap extends PApplet {
 		// To print all of the features in a PointFeature (so you can see what they are)
 		// uncomment the line below.  Note this will only print if you call createMarker 
 		// from setup
-		//System.out.println(feature.getProperties());
+		System.out.println(feature.getProperties());
 		
 		// Create a new SimplePointMarker at the location given by the PointFeature
 		SimplePointMarker marker = new SimplePointMarker(feature.getLocation());
@@ -107,8 +114,10 @@ public class EarthquakeCityMap extends PApplet {
 		
 		// Here is an example of how to use Processing's color method to generate 
 	    // an int that represents the color yellow.  
-	    int yellow = color(255, 255, 0);
-		
+		int yellow = color(255, 255, 0);
+	    int blue = color(0, 0, 255);
+	    int red = color(255, 0, 0);
+	
 		// TODO (Step 4): Add code below to style the marker's size and color 
 	    // according to the magnitude of the earthquake.  
 	    // Don't forget about the constants THRESHOLD_MODERATE and 
@@ -116,7 +125,21 @@ public class EarthquakeCityMap extends PApplet {
 	    // Rather than comparing the magnitude to a number directly, compare 
 	    // the magnitude to these variables (and change their value in the code 
 	    // above if you want to change what you mean by "moderate" and "light")
-	    
+	    // Minor earthquakes (less than magnitude 4.0) will have blue markers and be small.
+	    if (mag < THRESHOLD_LIGHT) {
+	    	marker.setColor(blue);
+	    	marker.setRadius(6);
+	    }
+	    // Light earthquakes (between 4.0-4.9) will have yellow markers and be medium size.
+	    else if (mag >= THRESHOLD_LIGHT && mag <= 4.9) {
+	    	marker.setColor(yellow);
+	    	marker.setRadius(10);
+	    }
+	    // Moderate and higher earthquakes (5.0 and over) will have red markers and be largest.
+	    else {
+	    	marker.setColor(red);
+	    	marker.setRadius(15);
+	    }
 	    
 	    // Finally return the marker
 	    return marker;
@@ -134,6 +157,27 @@ public class EarthquakeCityMap extends PApplet {
 	private void addKey() 
 	{	
 		// Remember you can use Processing's graphics methods here
+		rectMode(CORNER);
+		fill(77, 124, 198);
+		rect(25, 50, 150, 250);
+		textSize(12);
+		fill(255);
+		text("Earthquake Key", 50, 75, 200, 400);
+		// red
+		fill(255, 0, 0);
+		ellipse(50, 125, 15, 15);
+		fill(255);
+		text("5.0+ Magnitude", 60, 125);
+		// yellow
+		fill(255, 255, 0);
+		ellipse(50, 175, 10, 10);
+		fill(255);
+		text("4.0+ Magnitude", 60, 175);
+		// blue
+		fill(0, 0, 255);
+		ellipse(50, 225, 6, 6);
+		fill(255);
+		text("Below 4.0", 60, 225);
 	
 	}
 }
