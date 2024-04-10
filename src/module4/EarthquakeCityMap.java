@@ -1,6 +1,7 @@
 package module4;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import de.fhpotsdam.unfolding.UnfoldingMap;
@@ -13,6 +14,7 @@ import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
+import de.fhpotsdam.unfolding.providers.OpenStreetMap;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import parsing.ParseFeed;
 import processing.core.PApplet;
@@ -68,7 +70,8 @@ public class EarthquakeCityMap extends PApplet {
 		    earthquakesURL = "2.5_week.atom";  // The same feed, but saved August 7, 2015
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
+			//map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
+			map = new UnfoldingMap(this, 200, 50, 700, 500, new OpenStreetMap.OpenStreetMapProvider());
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 		    //earthquakesURL = "2.5_week.atom";
 		}
@@ -80,7 +83,7 @@ public class EarthquakeCityMap extends PApplet {
 		//earthquakesURL = "test2.atom";
 		
 		// WHEN TAKING THIS QUIZ: Uncomment the next line
-		//earthquakesURL = "quiz1.atom";
+		earthquakesURL = "quiz1.atom";
 		
 		
 		// (2) Reading in earthquake data and geometric properties
@@ -170,7 +173,7 @@ public class EarthquakeCityMap extends PApplet {
 		// If isInCountry ever returns true, isLand should return true.
 		for (Marker m : countryMarkers) {
 			// TODO: Finish this method using the helper method isInCountry
-			
+			if(isInCountry(earthquake, m)) return true;
 		}
 		
 		
@@ -197,6 +200,27 @@ public class EarthquakeCityMap extends PApplet {
 		//     	and (2) if it is on land, that its country property matches 
 		//      the name property of the country marker.   If so, increment
 		//      the country's counter.
+		HashMap<String, Integer> placeQuakes = new HashMap<String, Integer>();
+		String notOnLand = "OCEAN QUAKES";
+		int onLand = 0;
+		for (Marker cm : countryMarkers) {
+			String placeName = (String)cm.getProperty("name");
+			for (Marker m : quakeMarkers) {
+				String land = (String)m.getProperty("country");
+				EarthquakeMarker em = (EarthquakeMarker)m;
+				if(em.isOnLand() && placeName.equals(land)) {
+					onLand++;
+					if (placeQuakes.containsKey(placeName)) {
+						placeQuakes.put(placeName, placeQuakes.get(placeName) + 1);
+					}
+					else {
+						placeQuakes.put(placeName, 1);
+					}
+				}
+			}
+		}
+		placeQuakes.put(notOnLand, quakeMarkers.size() - onLand);
+		System.out.println(placeQuakes);
 		
 		// Here is some code you will find useful:
 		// 
