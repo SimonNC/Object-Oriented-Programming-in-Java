@@ -4,6 +4,7 @@ import de.fhpotsdam.unfolding.data.Feature;
 import de.fhpotsdam.unfolding.data.PointFeature;
 import de.fhpotsdam.unfolding.geo.Location;
 import de.fhpotsdam.unfolding.marker.SimplePointMarker;
+import module5.CommonMarker;
 import processing.core.PGraphics;
 
 /** Implements a visual marker for cities on an earthquake map
@@ -12,7 +13,7 @@ import processing.core.PGraphics;
  * @author Your name here
  *
  */
-public class CityMarker extends SimplePointMarker {
+public class CityMarker extends SimplePointMarker  {
 	
 	// The size of the triangle marker
 	// It's a good idea to use this variable in your draw method
