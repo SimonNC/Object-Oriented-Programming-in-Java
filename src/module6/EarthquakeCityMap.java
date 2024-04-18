@@ -14,6 +14,7 @@ import de.fhpotsdam.unfolding.marker.Marker;
 import de.fhpotsdam.unfolding.marker.MultiMarker;
 import de.fhpotsdam.unfolding.providers.Google;
 import de.fhpotsdam.unfolding.providers.MBTilesMapProvider;
+import de.fhpotsdam.unfolding.providers.OpenStreetMap;
 import de.fhpotsdam.unfolding.utils.MapUtils;
 import parsing.ParseFeed;
 import processing.core.PApplet;
@@ -73,7 +74,8 @@ public class EarthquakeCityMap extends PApplet {
 		    earthquakesURL = "2.5_week.atom";  // The same feed, but saved August 7, 2015
 		}
 		else {
-			map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
+			//map = new UnfoldingMap(this, 200, 50, 650, 600, new Google.GoogleMapProvider());
+			map = new UnfoldingMap(this, 200, 50, 650, 600, new OpenStreetMap.OpenStreetMapProvider());
 			// IF YOU WANT TO TEST WITH A LOCAL FILE, uncomment the next line
 		    //earthquakesURL = "2.5_week.atom";
 		}
@@ -117,6 +119,7 @@ public class EarthquakeCityMap extends PApplet {
 
 	    // could be used for debugging
 	    printQuakes();
+	    sortAndPrint(20);
 	 		
 	    // (3) Add markers to map
 	    //     NOTE: Country markers are not added to the map.  They are used
@@ -139,6 +142,22 @@ public class EarthquakeCityMap extends PApplet {
 	// TODO: Add the method:
 	//   private void sortAndPrint(int numToPrint)
 	// and then call that method from setUp
+	private void sortAndPrint(int numToPrint) {
+		// create a new array from the list of earthquake markers
+		//EarthquakeMarker[] A = (EarthquakeMarker[]) quakeMarkers.toArray();
+		Object[] quakeMarkersA = quakeMarkers.toArray();
+		
+		// sort the array of earthquake markers in reverse order of their magnitude
+		Arrays.sort(quakeMarkersA);
+		// print out the top numToPrint earthquakes
+		System.out.println("Sorted by Magnitude===============");
+		for (int i = 0; i < quakeMarkersA.length; i++) {
+			if (i > numToPrint - 1) break;
+			else System.out.println(quakeMarkersA[i]);
+		}
+		// If numToPrint is larger than the number of markers in quakeMarkers
+		//  it should print out all of the earthquakes and stop, but it should not crash
+	}
 	
 	/** Event handler that gets called automatically when the 
 	 * mouse moves.

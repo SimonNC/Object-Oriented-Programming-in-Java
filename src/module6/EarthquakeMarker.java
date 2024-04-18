@@ -10,7 +10,7 @@ import processing.core.PGraphics;
  *
  */
 // TODO: Implement the comparable interface
-public abstract class EarthquakeMarker extends CommonMarker
+public abstract class EarthquakeMarker extends CommonMarker implements Comparable<EarthquakeMarker>
 {
 	
 	// Did the earthquake occur on land?  This will be set by the subclasses.
@@ -20,7 +20,7 @@ public abstract class EarthquakeMarker extends CommonMarker
 	// You will want to set this in the constructor, either
 	// using the thresholds below, or a continuous function
 	// based on magnitude. 
-	protected float radius;
+	//protected float radius;
 	
 	
 	// constants for distance
@@ -49,7 +49,8 @@ public abstract class EarthquakeMarker extends CommonMarker
 		super(feature.getLocation());
 		// Add a radius property and then set the properties
 		java.util.HashMap<String, Object> properties = feature.getProperties();
-		float magnitude = Float.parseFloat(properties.get("magnitude").toString());
+		//float magnitude = Float.parseFloat(properties.get("magnitude").toString());
+		float magnitude = (float) properties.get("magnitude");
 		properties.put("radius", 2*magnitude );
 		setProperties(properties);
 		this.radius = 1.75f*getMagnitude();
@@ -58,6 +59,15 @@ public abstract class EarthquakeMarker extends CommonMarker
 	// TODO: Add the method:
 	// public int compareTo(EarthquakeMarker marker)
 	
+	public int compareTo(EarthquakeMarker marker) {
+		// sorts earthquakes in reverse order of magnitude
+		
+		//return (marker.getMagnitude() ).compareTo(this.getMagnitude());
+		
+		if (marker.getMagnitude() > this.getMagnitude()) return 1;
+		else if (marker.getMagnitude() < this.getMagnitude()) return -1;
+		else return 0;
+	}
 	
 	// calls abstract method drawEarthquake and then checks age and draws X if needed
 	@Override
